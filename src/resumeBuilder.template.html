@@ -1,0 +1,1104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Resume Builder (mock)</title>
+<style>
+  :root {
+    --bg: #f4f6fb;
+    --card: #ffffff;
+    --ink: #16213e;
+    --slate: #5b6478;
+    --border: #e7e9f2;
+    --accent: #0d3b3b;
+    --accent-ink: #ffffff;
+    --tint: #f6f1e4;
+    --ai: #a86f0a;
+    --ai-bg: #fbf1e0;
+    --ai-border: #efd9ad;
+    --chip: #eef1f8;
+    --input: #ffffff;
+    --danger: #c0392b;
+    --ok: #1a8f62;
+    --shadow: 0 1px 2px rgba(22, 33, 62, 0.06);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1720; --card: #16212c; --ink: #e8edf5; --slate: #9aa7ba; --border: #263446;
+      --accent: #23807f; --tint: #1d2a33; --ai: #e6b655; --ai-bg: #2e2616; --ai-border: #4a3c1d;
+      --chip: #1f2c38; --input: #111b25; --danger: #ef7a6c; --ok: #4cc79a; --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1720; --card: #16212c; --ink: #e8edf5; --slate: #9aa7ba; --border: #263446;
+    --accent: #23807f; --tint: #1d2a33; --ai: #e6b655; --ai-bg: #2e2616; --ai-border: #4a3c1d;
+    --chip: #1f2c38; --input: #111b25; --danger: #ef7a6c; --ok: #4cc79a; --shadow: none;
+  }
+  html { scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 72px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 15px; line-height: 1.5;
+  }
+  button, input, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .mockbar { background: var(--ai-bg); color: var(--ai); border-bottom: 1px solid var(--ai-border); font-size: 13px; text-align: center; padding: 6px 12px; }
+
+  header.top {
+    position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10;
+    background: var(--card); border-bottom: 1px solid var(--border);
+  }
+  .top-inner { max-width: 1240px; margin: 0 auto; padding: 12px 20px; display: flex; align-items: center; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .logo { width: 34px; height: 34px; border-radius: 8px; background: var(--accent); color: var(--accent-ink); display: grid; place-items: center; font-weight: 700; flex: none; }
+  .brand h1 { font-size: 16px; margin: 0; line-height: 1.2; }
+  .brand p { margin: 0; font-size: 12px; color: var(--slate); }
+  .back { border: 0; background: none; color: var(--slate); font-weight: 600; font-size: 13px; cursor: pointer; padding: 6px 8px; border-radius: 8px; display: flex; align-items: center; gap: 6px; }
+  .back:hover { background: var(--chip); }
+  .spacer { flex: 1; }
+  .btn { border-radius: 9px; padding: 9px 16px; font-weight: 600; font-size: 14px; cursor: pointer; border: 1px solid var(--border); background: var(--card); }
+  .btn:hover { background: var(--chip); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .btn.primary:hover { filter: brightness(1.12); background: var(--accent); }
+
+  .tabs { display: none; max-width: 1240px; margin: 12px auto 0; padding: 0 20px; }
+  .tabs .seg { display: flex; background: var(--chip); border-radius: 10px; padding: 4px; width: 100%; }
+  .tabs button { flex: 1; border: 0; background: none; padding: 8px; border-radius: 7px; font-weight: 600; color: var(--slate); cursor: pointer; }
+  .tabs button[aria-selected="true"] { background: var(--card); color: var(--ink); box-shadow: var(--shadow); }
+
+  main { max-width: 1240px; margin: 0 auto; padding: 24px 20px 64px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr); gap: 28px; align-items: start; }
+
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px; margin-bottom: 18px; box-shadow: var(--shadow); }
+  .card h2 { font-size: 17px; margin: 0 0 2px; }
+  .card .sub { margin: 0 0 16px; color: var(--slate); font-size: 13px; }
+  label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; }
+  .opt { font-weight: 400; color: var(--slate); }
+  input[type="text"], input[type="email"], input[type="tel"], input[type="month"], textarea {
+    width: 100%; background: var(--input); border: 1px solid var(--border); border-radius: 9px; padding: 10px 12px; outline-offset: 0;
+  }
+  input:focus, textarea:focus { border-color: var(--accent); outline: 2px solid color-mix(in srgb, var(--accent) 35%, transparent); }
+  textarea { resize: vertical; min-height: 84px; }
+  .field { margin-bottom: 14px; }
+  .field:last-child { margin-bottom: 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .hint { font-size: 12px; color: var(--slate); margin-top: 5px; }
+
+  .btn-ai { display: inline-flex; align-items: center; gap: 8px; background: var(--ai-bg); color: var(--ai); border: 1px solid var(--ai-border); border-radius: 9px; padding: 9px 14px; font-weight: 600; font-size: 13px; cursor: pointer; }
+  .btn-ai:hover { filter: brightness(0.97); }
+  .btn-ai[disabled] { opacity: 0.6; cursor: progress; }
+  .spark { width: 14px; height: 14px; flex: none; }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 0; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; background: var(--chip); border: 1px solid var(--border); border-radius: 999px; padding: 4px 6px 4px 12px; font-size: 13px; font-weight: 500; }
+  .chip button { border: 0; background: none; cursor: pointer; color: var(--slate); width: 20px; height: 20px; border-radius: 50%; line-height: 1; font-size: 15px; }
+  .chip button:hover { background: var(--border); color: var(--ink); }
+  .chip.suggest { padding: 4px 12px; background: var(--card); border-style: dashed; cursor: pointer; color: var(--ink); }
+  .chip.suggest:hover { border-color: var(--accent); }
+  .chip.suggest.added { background: var(--tint); border-style: solid; color: var(--slate); cursor: default; }
+  .skillrow { display: flex; gap: 8px; }
+  .skillrow .btn { padding: 9px 14px; }
+  .skillgroup { margin-top: 16px; }
+  .skillgroup:first-of-type { margin-top: 0; }
+
+  .ai-panel { margin-top: 16px; border: 1px solid var(--ai-border); background: var(--ai-bg); border-radius: 12px; padding: 14px 16px; }
+  .ai-panel h3 { margin: 0 0 2px; font-size: 14px; color: var(--ai); }
+  .ai-panel p { margin: 0 0 8px; font-size: 12px; color: var(--slate); }
+  .ai-panel h4 { margin: 12px 0 0; font-size: 12px; color: var(--slate); font-weight: 600; }
+  .ai-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .link { border: 0; background: none; padding: 0; cursor: pointer; font-weight: 600; font-size: 13px; color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+  .link.danger { color: var(--danger); }
+
+  .entry { border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 14px; background: color-mix(in srgb, var(--card) 70%, var(--bg)); }
+  .entry-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .entry-head strong { font-size: 14px; }
+  .check { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; margin-top: 8px; }
+  .check input { width: 16px; height: 16px; accent-color: var(--accent); }
+  .add { width: 100%; border: 1px dashed var(--border); background: none; border-radius: 10px; padding: 11px; color: var(--accent); font-weight: 600; cursor: pointer; }
+  .add:hover { background: var(--chip); }
+  .divider { height: 1px; background: var(--border); margin: 14px 0; }
+  .spin { animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* Template picker */
+  .tpls { display: grid; grid-template-columns: repeat(auto-fill, minmax(112px, 1fr)); gap: 10px; }
+  .tpl { border: 1px solid var(--border); border-radius: 10px; background: var(--card); padding: 8px; cursor: pointer; text-align: left; display: flex; flex-direction: column; gap: 2px; }
+  .tpl:hover { border-color: var(--slate); }
+  .tpl[aria-pressed="true"] { border-color: var(--accent); outline: 2px solid color-mix(in srgb, var(--accent) 40%, transparent); }
+  .tpl .tn { font-size: 13px; font-weight: 600; margin-top: 6px; }
+  .tpl .td { font-size: 11.5px; color: var(--slate); line-height: 1.3; }
+  .thumb { display: flex; flex-direction: column; gap: 3px; padding: 7px; height: 86px; background: #fff; border: 1px solid #e3e6ee; border-radius: 5px; overflow: hidden; }
+
+  /* Live preview */
+  .preview-wrap { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 76px); }
+  .preview-title { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin: 0 2px 10px; }
+  .preview-title h2 { font-size: 15px; margin: 0; }
+
+  .paper {
+    --p-font: Georgia, "Times New Roman", serif; --p-ink: #1b2433; --p-muted: #4a5568; --p-accent: #1b2433;
+    --p-size: 13px; --p-name: 26px; --p-py: 40px; --p-px: 38px;
+    background: #ffffff; color: var(--p-ink); border-radius: 6px; padding: var(--p-py) var(--p-px); min-height: 560px;
+    box-shadow: 0 6px 24px rgba(15, 23, 32, 0.14); font-family: var(--p-font); font-size: var(--p-size); line-height: 1.5; overflow: hidden;
+  }
+  .paper h3 { margin: 0; font-size: var(--p-name); letter-spacing: 0.2px; font-weight: 700; line-height: 1.2; }
+  .paper .contact { margin: 4px 0 0; color: var(--p-muted); font-size: 0.92em; }
+  .paper .summary { margin: 12px 0 0; }
+  .paper .contact span + span::before { content: "  |  "; white-space: pre; }
+  .paper .ph { color: #a3acba; font-style: italic; }
+  .paper h4 { margin: 20px 0 6px; font-size: 1em; font-weight: 700; border-bottom: 1px solid var(--p-accent); padding-bottom: 3px; color: var(--p-ink); }
+  .paper .row { display: flex; justify-content: space-between; gap: 12px; }
+  .paper .row b { font-weight: 700; }
+  .paper .when { color: var(--p-muted); white-space: nowrap; }
+  .paper ul { margin: 4px 0 0; padding-left: 18px; }
+  .paper li { margin: 2px 0; }
+  .paper .item { margin-bottom: 12px; }
+  .paper .skills p { margin: 2px 0; }
+  .paper .skills b { font-weight: 700; }
+  .paper .sk + .sk::before { content: ", "; }
+
+  /* 1 Classic: the defaults above */
+
+  /* 2 Modern */
+  .t-modern { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-accent: #0d7a77; --p-name: 30px; }
+  .t-modern h3 { font-weight: 800; color: var(--p-accent); }
+  .t-modern h4 { border: 0; padding: 0; color: var(--p-accent); font-size: 1.05em; }
+  .t-modern h4::after { content: ""; display: block; width: 34px; height: 3px; background: var(--p-accent); border-radius: 2px; margin-top: 4px; }
+
+  /* 3 Executive */
+  .t-executive { --p-accent: #13294b; --p-name: 28px; }
+  .t-executive .hd, .t-sage .hd, .t-ocean .hd, .t-rose .hd { margin: calc(var(--p-py) * -1) calc(var(--p-px) * -1) 6px; padding: 28px var(--p-px) 20px; }
+  .t-executive .hd { background: #13294b; color: #fff; border-bottom: 4px solid #c9a227; }
+  .t-executive .hd .contact { color: #cdd7ea; }
+  .t-executive .hd .ph { color: rgba(255, 255, 255, 0.55); }
+  .t-executive h4 { border-bottom-color: #c9a227; }
+
+  /* 4 Minimal */
+  .t-minimal { --p-font: "Helvetica Neue", Helvetica, Arial, sans-serif; --p-accent: #8a94a6; --p-muted: #6b7385; --p-name: 30px; --p-py: 46px; --p-px: 44px; }
+  .t-minimal h3 { font-weight: 300; letter-spacing: 0.5px; }
+  .t-minimal h4 { border: 0; padding: 0; color: #8a94a6; font-size: 0.9em; font-weight: 600; letter-spacing: 0.8px; margin-top: 28px; }
+  .t-minimal .item { margin-bottom: 16px; }
+
+  /* 5 Sidebar */
+  .t-sidebar {
+    --p-font: "Helvetica Neue", Helvetica, Arial, sans-serif; --p-accent: #0d3b3b; --p-name: 21px; padding: 0;
+    display: grid; grid-template-columns: 34% 1fr; grid-template-rows: auto auto 1fr;
+    grid-template-areas: "hd jobs" "skills jobs" "edu jobs";
+  }
+  .t-sidebar .hd { grid-area: hd; background: #0d3b3b; color: #fff; padding: 34px 20px 14px; }
+  .t-sidebar .sec-skills { grid-area: skills; background: #0d3b3b; color: #fff; padding: 0 20px 14px; }
+  .t-sidebar .sec-edu { grid-area: edu; background: #0d3b3b; color: #fff; padding: 0 20px 28px; }
+  .t-sidebar .sec-jobs { grid-area: jobs; padding: 34px 26px 28px; }
+  .t-sidebar .hd .contact { color: #cfe3e0; font-size: 0.88em; word-break: break-word; }
+  .t-sidebar .contact span { display: block; }
+  .t-sidebar .contact span + span::before { content: none; }
+  .t-sidebar .sec-skills h4, .t-sidebar .sec-edu h4 { color: #fff; border-bottom-color: rgba(255, 255, 255, 0.35); }
+  .t-sidebar .sec-skills .sk { display: block; }
+  .t-sidebar .sec-skills .sk + .sk::before { content: none; }
+  .t-sidebar .sec-skills p { margin: 6px 0; }
+  .t-sidebar .sec-edu .row { display: block; }
+  .t-sidebar .sec-edu .when { color: #cfe3e0; white-space: normal; }
+  .t-sidebar .hd .ph, .t-sidebar .sec-skills .ph, .t-sidebar .sec-edu .ph { color: rgba(255, 255, 255, 0.55); }
+
+  /* 6 Creative */
+  .t-creative { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-accent: #ef5b45; --p-name: 36px; }
+  .t-creative .hd { border-left: 8px solid var(--p-accent); padding-left: 14px; margin-bottom: 4px; }
+  .t-creative h3 { font-weight: 800; line-height: 1.05; }
+  .t-creative h4 { border: 0; background: var(--p-accent); color: #fff; display: inline-block; padding: 2px 12px; border-radius: 4px; margin: 20px 0 8px; font-size: 0.92em; }
+  .t-creative .sk, .t-sage .sk { display: inline-block; margin: 0 6px 6px 0; padding: 1px 10px; border-radius: 999px; background: #fdebe7; }
+  .t-creative .sk + .sk::before, .t-sage .sk + .sk::before { content: none; }
+
+  /* 7 Compact */
+  .t-compact { --p-font: Arial, Helvetica, sans-serif; --p-size: 11.5px; --p-name: 22px; --p-py: 26px; --p-px: 28px; --p-accent: #2d3748; line-height: 1.35; }
+  .t-compact h4 { margin: 12px 0 4px; padding-bottom: 2px; border-bottom-width: 2px; }
+  .t-compact .item { margin-bottom: 7px; }
+  .t-compact li { margin: 0; }
+  .t-compact .contact { margin-top: 2px; }
+
+  /* 8 Elegant */
+  .t-elegant { --p-font: "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif; --p-accent: #7a1f3d; --p-name: 30px; }
+  .t-elegant .hd { text-align: center; }
+  .t-elegant h3 { font-weight: 400; letter-spacing: 2px; }
+  .t-elegant h4 { text-align: center; color: var(--p-accent); font-weight: 400; letter-spacing: 2px; border-top: 1px solid var(--p-accent); border-bottom: 1px solid var(--p-accent); padding: 3px 0; margin: 22px 0 8px; }
+
+  /* 9 Bold */
+  .t-bold { --p-font: Arial, Helvetica, sans-serif; --p-accent: #111111; --p-name: 36px; }
+  .t-bold h3 { font-family: "Arial Black", "Helvetica Neue", Arial, sans-serif; font-weight: 900; line-height: 1.05; display: inline-block; border-bottom: 6px solid #ffd23f; padding-bottom: 4px; }
+  .t-bold .contact { margin-top: 8px; }
+  .t-bold h4 { background: #111111; color: #fff; border: 0; padding: 4px 10px; margin: 22px 0 8px; }
+
+  /* 10 Tech */
+  .t-tech { --p-font: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace; --p-size: 12px; --p-accent: #0f8f5f; --p-name: 24px; }
+  .t-tech h3::before { content: "> "; color: var(--p-accent); }
+  .t-tech h4 { border: 0; padding: 0; color: var(--p-accent); }
+  .t-tech h4::before { content: "## "; }
+  .t-tech .item { border-left: 2px solid #cfe9dd; padding-left: 10px; }
+
+  /* 11 Sage */
+  .t-sage { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-accent: #3f6b4f; --p-name: 28px; }
+  .t-sage .hd { background: #e6efe6; color: #2c4a38; }
+  .t-sage .hd .contact { color: #4d6a57; }
+  .t-sage h4 { border-bottom: 2px solid #cfe0d2; color: #2c4a38; }
+  .t-sage .sk { background: #e6efe6; }
+
+  /* 12 Timeline */
+  .t-timeline { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-accent: #4338ca; --p-name: 28px; }
+  .t-timeline h3 { font-weight: 800; }
+  .t-timeline h4 { border: 0; padding: 0; color: var(--p-accent); font-size: 1.08em; }
+  .t-timeline .item { position: relative; border-left: 2px solid #dcdaf7; padding-left: 16px; margin-left: 5px; }
+  .t-timeline .item::before { content: ""; position: absolute; left: -6px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--p-accent); }
+
+  /* Template chooser (opens from a button) */
+  .tpl-current { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .cur-thumb { width: 76px; flex: none; }
+  .tpl-current .meta { flex: 1; min-width: 150px; display: flex; flex-direction: column; }
+  .tpl-current .meta strong { font-size: 15px; }
+  .tpl-current .meta span { font-size: 12.5px; color: var(--slate); }
+  .btn.small { padding: 6px 12px; font-size: 13px; }
+  .modal { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; padding: calc(env(safe-area-inset-top, 0px) + 16px) 16px calc(env(safe-area-inset-bottom, 0px) + 16px); }
+  .modal[hidden] { display: none; }
+  .modal-backdrop { position: absolute; inset: 0; background: rgba(10, 16, 28, 0.55); }
+  .modal-box { position: relative; background: var(--card); border: 1px solid var(--border); border-radius: 14px; width: min(900px, 100%); max-height: 100%; display: flex; flex-direction: column; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35); }
+  .modal-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+  .modal-head h2 { margin: 0; font-size: 17px; }
+  .modal-head p { margin: 2px 0 0; font-size: 12.5px; color: var(--slate); }
+  .modal-box .tpls { padding: 18px 20px 22px; overflow: auto; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr)); }
+
+  /* 13 Slate */
+  .t-slate { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-accent: #475569; --p-name: 28px; border-top: 10px solid #475569; padding-top: calc(var(--p-py) - 10px); }
+  .t-slate h3 { font-weight: 800; color: #1e293b; }
+  .t-slate h4 { background: #eef1f5; border: 0; padding: 4px 10px; color: #334155; margin: 20px 0 8px; }
+
+  /* 14 Ocean */
+  .t-ocean { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-accent: #0b4f8a; --p-name: 30px; }
+  .t-ocean h3 { font-weight: 800; }
+  .t-ocean .hd { background: linear-gradient(120deg, #0b4f8a, #12a4a0); color: #fff; }
+  .t-ocean .hd .contact { color: #dff3f5; }
+  .t-ocean .hd .ph { color: rgba(255, 255, 255, 0.6); }
+  .t-ocean h4 { color: #0b4f8a; border-bottom: 2px solid #12a4a0; }
+
+  /* 15 Lavender (right side panel) */
+  .t-lavender {
+    --p-font: "Helvetica Neue", Helvetica, Arial, sans-serif; --p-accent: #6d28d9; --p-name: 26px; padding: 0;
+    display: grid; grid-template-columns: 1fr 34%; grid-template-rows: auto 1fr; grid-template-areas: "hd skills" "jobs edu";
+  }
+  .t-lavender .hd { grid-area: hd; padding: 34px 26px 6px; }
+  .t-lavender .hd h3 { color: #2e1065; font-weight: 800; }
+  .t-lavender .sec-jobs { grid-area: jobs; padding: 0 26px 28px; }
+  .t-lavender .sec-skills { grid-area: skills; background: #ede9fe; padding: 34px 20px 14px; }
+  .t-lavender .sec-edu { grid-area: edu; background: #ede9fe; padding: 0 20px 28px; }
+  .t-lavender h4 { color: #5b21b6; border-bottom-color: #6d28d9; }
+  .t-lavender .sec-skills h4 { margin-top: 0; }
+  .t-lavender .sec-skills .sk { display: block; }
+  .t-lavender .sec-skills .sk + .sk::before { content: none; }
+  .t-lavender .sec-skills p { margin: 6px 0; }
+  .t-lavender .sec-edu .row { display: block; }
+  .t-lavender .sec-edu .when { white-space: normal; }
+
+  /* 16 Sunset */
+  .t-sunset { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-accent: #e8590c; --p-name: 32px; }
+  .t-sunset .hd { padding-bottom: 12px; margin-bottom: 4px; border-bottom: 5px solid; border-image: linear-gradient(90deg, #f59f00, #e8590c, #c2255c) 1; }
+  .t-sunset h3 { font-weight: 800; color: #7c2d12; }
+  .t-sunset h4 { border: 0; border-left: 5px solid var(--p-accent); padding: 1px 0 1px 10px; color: #7c2d12; margin: 20px 0 8px; }
+
+  /* 17 Newspaper */
+  .t-newspaper { --p-font: "Times New Roman", Times, Georgia, serif; --p-accent: #111111; --p-name: 36px; }
+  .t-newspaper .hd { text-align: center; border-top: 3px double #111; border-bottom: 3px double #111; padding: 10px 0; margin-bottom: 6px; }
+  .t-newspaper h3 { font-variant: small-caps; letter-spacing: 1px; }
+  .t-newspaper h4 { border: 0; border-bottom: 1px solid #999; font-style: italic; }
+  .t-newspaper .skills { column-count: 2; column-gap: 24px; }
+  .t-newspaper .skills p { break-inside: avoid; }
+
+  /* 18 Midnight (dark page) */
+  .t-midnight { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-ink: #e6edf7; --p-muted: #9fb0c8; --p-accent: #38bdf8; --p-name: 30px; background: #0f1b2d; }
+  .t-midnight h3 { color: #fff; font-weight: 800; }
+  .t-midnight h4 { color: #38bdf8; border-bottom-color: #24405f; }
+  .t-midnight .ph { color: #5d7491; }
+  .t-midnight li::marker { color: #38bdf8; }
+
+  /* 19 Rose */
+  .t-rose { --p-font: Georgia, "Times New Roman", serif; --p-accent: #e11d48; --p-name: 28px; }
+  .t-rose .hd { background: #fde8ec; color: #7f1d3a; }
+  .t-rose .hd .contact { color: #9d4b61; }
+  .t-rose h4 { color: #9f1239; border-bottom: 2px dotted #e11d48; }
+
+  /* 20 Grid */
+  .t-grid { --p-font: "Helvetica Neue", Helvetica, Arial, sans-serif; --p-accent: #000000; --p-name: 30px; }
+  .t-grid h3 { font-weight: 900; }
+  .t-grid h4 { border: 2px solid #000; padding: 3px 10px; margin: 20px 0 8px; }
+  .t-grid .sk { display: inline-block; border: 1.5px solid #000; padding: 0 8px; margin: 0 6px 6px 0; }
+  .t-grid .sk + .sk::before { content: none; }
+  .t-grid .item { border-bottom: 1px solid #cbd0d8; padding-bottom: 8px; }
+
+  /* 21 Academic (dates in a left column) */
+  .t-academic { --p-font: "Times New Roman", Times, serif; --p-size: 12.5px; --p-accent: #111111; --p-name: 26px; }
+  .t-academic h4 { font-variant: small-caps; letter-spacing: 0.5px; border-bottom-width: 1.5px; }
+  .t-academic .item { display: grid; grid-template-columns: 104px 1fr; column-gap: 12px; }
+  .t-academic .row { display: contents; }
+  .t-academic .when { grid-column: 1; grid-row: 1; white-space: normal; font-style: italic; font-size: 0.92em; }
+  .t-academic .row b { grid-column: 2; grid-row: 1; }
+  .t-academic .item ul, .t-academic .item > div:not(.row) { grid-column: 2; }
+
+  /* 22 Split (name left, contact right) */
+  .t-split { --p-font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; --p-accent: #4d7c0f; --p-name: 30px; }
+  .t-split .hd { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; border-bottom: 2px solid #d9e8b8; padding-bottom: 10px; }
+  .t-split h3 { color: #1a2e05; font-weight: 800; }
+  .t-split .contact { margin: 0; text-align: right; }
+  .t-split .contact span { display: block; }
+  .t-split .contact span + span::before { content: none; }
+  .t-split h4 { border-bottom: 2px solid #d9e8b8; color: var(--p-accent); }
+
+  .toast { position: fixed; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 20px); transform: translate(-50%, 20px); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 10px; font-size: 13px; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s; max-width: calc(100% - 32px); text-align: center; z-index: 30; }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  @media (max-width: 920px) {
+    main { grid-template-columns: 1fr; padding-top: 16px; }
+    .tabs { display: block; }
+    main[data-view="edit"] .preview-wrap { display: none; }
+    main[data-view="preview"] #formCol { display: none; }
+    .preview-wrap { position: static; }
+    .paper { --p-py: 28px; --p-px: 22px; }
+    .t-sidebar { grid-template-columns: 38% 1fr; }
+    .t-lavender { grid-template-columns: 1fr 38%; }
+    .tpls { grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); }
+    .hide-sm { display: none; }
+    .grid2 { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { .spin { animation: none; } .toast { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="mockbar">The skill suggestions below are simulated for this demo. Your draft and finished resume are saved for real.</div>
+
+<header class="top">
+  <div class="top-inner">
+    <button class="back" id="backBtn" type="button" aria-label="Back to resume step">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+      <span class="hide-sm">Back to job match</span>
+    </button>
+    <div class="brand">
+      <div class="logo">H</div>
+      <div><h1>Resume Builder</h1><p class="hide-sm">Build a resume to use for your match</p></div>
+    </div>
+    <div class="spacer"></div>
+    <button class="btn hide-sm" id="saveDraft" type="button">Save draft</button>
+    <button class="btn primary" id="useResume" type="button">Use this resume</button>
+  </div>
+</header>
+
+<div class="tabs">
+  <div class="seg" role="tablist" aria-label="Builder view">
+    <button role="tab" aria-selected="true" data-tab="edit" type="button">Edit</button>
+    <button role="tab" aria-selected="false" data-tab="preview" type="button">Preview</button>
+  </div>
+</div>
+
+<main id="main" data-view="edit">
+  <div id="formCol">
+
+    <section class="card" aria-labelledby="h-tpl">
+      <h2 id="h-tpl">Resume template</h2>
+      <p class="sub">Pick a look. Your content stays the same, and you can switch any time.</p>
+      <div class="tpl-current">
+        <span class="cur-thumb" id="tplCurThumb"></span>
+        <span class="meta"><strong id="tplCurName">Classic</strong><span id="tplCurNote"></span></span>
+        <button class="btn" type="button" data-open-tpl aria-haspopup="dialog">Choose a template</button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-name">
+      <h2 id="h-name">Full name</h2>
+      <p class="sub">This appears at the top of your resume.</p>
+      <div class="field">
+        <label for="name">Full name</label>
+        <input type="text" id="name" data-bind="name" placeholder="e.g. Maria Santos" autocomplete="name" />
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-contact">
+      <h2 id="h-contact">Contact details</h2>
+      <p class="sub">Recruiters use these to reach you.</p>
+      <div class="grid2 field">
+        <div>
+          <label for="mobile">Mobile number</label>
+          <input type="tel" id="mobile" data-bind="mobile" placeholder="e.g. +1 416 555 0134" autocomplete="tel" />
+        </div>
+        <div>
+          <label for="email">Email address</label>
+          <input type="email" id="email" data-bind="email" placeholder="you@example.com" autocomplete="email" />
+        </div>
+      </div>
+      <div class="field">
+        <label for="address">Home address</label>
+        <input type="text" id="address" data-bind="address" placeholder="Street, city, province / state, postal code" autocomplete="street-address" />
+      </div>
+      <div class="field">
+        <label for="portfolio">Online portfolio or professional networking site <span class="opt">(optional)</span></label>
+        <input type="text" id="portfolio" data-bind="portfolio" placeholder="e.g. linkedin.com/in/yourname or yourportfolio.com" autocomplete="url" />
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-summary">
+      <h2 id="h-summary">Professional summary</h2>
+      <p class="sub">A short overview that appears near the top of your resume, right under your contact details.</p>
+      <div class="field">
+        <label for="summary">Summary <span class="opt">(optional)</span></label>
+        <textarea id="summary" data-bind="summary" rows="4" placeholder="Briefly explains your professional history and mentions key skills, education or work experience that make you a desirable candidate."></textarea>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-skills">
+      <h2 id="h-skills">Skills</h2>
+      <p class="sub">Hard skills are tools and technical abilities. Soft skills are how you work with others.</p>
+
+      <div class="field">
+        <label for="targetJob">Job you're working on <span class="opt">(optional)</span></label>
+        <div class="skillrow">
+          <input type="text" id="targetJob" placeholder="e.g. Senior Software Developer" />
+          <button class="btn-ai" id="suggestBtn" type="button" style="white-space:nowrap">
+            <svg class="spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z"/></svg>
+            <span>Suggest skills</span>
+          </button>
+        </div>
+        <p class="hint">We'll suggest hard and soft skills that fit this role. Tap a suggestion to add it.</p>
+      </div>
+
+      <div id="suggestPanel" class="ai-panel" hidden>
+        <div class="ai-head">
+          <div>
+            <h3 id="suggestTitle">Suggested skills</h3>
+            <p>Only add the ones that are true for you.</p>
+          </div>
+          <button class="link" id="addAll" type="button">Add all</button>
+        </div>
+        <h4>Hard skills</h4>
+        <div class="chips" id="sugHard"></div>
+        <h4>Soft skills</h4>
+        <div class="chips" id="sugSoft"></div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="skillgroup">
+        <label for="hardInput">Hard skills</label>
+        <div class="skillrow">
+          <input type="text" id="hardInput" placeholder="Type a skill and press Enter" />
+          <button class="btn" type="button" data-add-skill="hard">Add</button>
+        </div>
+        <div class="chips" id="hardChips" aria-live="polite"></div>
+      </div>
+
+      <div class="skillgroup">
+        <label for="softInput">Soft skills</label>
+        <div class="skillrow">
+          <input type="text" id="softInput" placeholder="Type a skill and press Enter" />
+          <button class="btn" type="button" data-add-skill="soft">Add</button>
+        </div>
+        <div class="chips" id="softChips" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-jobs">
+      <h2 id="h-jobs">Employment history</h2>
+      <p class="sub">Start with your most recent job. Describe the work in your own words, and we'll turn it into resume-ready bullet points.</p>
+      <div id="jobs"></div>
+      <button class="add" id="addJob" type="button">+ Add another job</button>
+    </section>
+
+    <section class="card" aria-labelledby="h-certs">
+      <h2 id="h-certs">Certificates and trainings <span class="opt">(optional)</span></h2>
+      <p class="sub">Add any certifications or trainings relevant to the roles you're applying for.</p>
+      <label class="check" style="margin-bottom:14px">
+        <input type="checkbox" id="hasCertsToggle" /> I have certificates or trainings to add
+      </label>
+      <div id="certsBody" hidden>
+        <div id="certs"></div>
+        <button class="add" id="addCert" type="button">+ Add another certificate</button>
+      </div>
+    </section>
+
+    <section class="card" aria-labelledby="h-edu">
+      <h2 id="h-edu">Educational background</h2>
+      <p class="sub">Schools, colleges, and certifications.</p>
+      <div id="edus"></div>
+      <button class="add" id="addEdu" type="button">+ Add education</button>
+    </section>
+
+    <section class="card" aria-labelledby="h-acc">
+      <h2 id="h-acc">Additional accomplishments <span class="opt">(optional)</span></h2>
+      <p class="sub">Awards, publications, volunteer leadership, projects &mdash; anything else worth highlighting.</p>
+      <label class="check" style="margin-bottom:14px">
+        <input type="checkbox" id="hasAccomplishmentsToggle" /> I have additional accomplishments to add
+      </label>
+      <div id="accBody" hidden>
+        <div id="accomplishments"></div>
+        <button class="add" id="addAccomplishment" type="button">+ Add another accomplishment</button>
+      </div>
+    </section>
+
+  </div>
+
+  <aside class="preview-wrap" aria-label="Resume preview">
+    <div class="preview-title"><h2>Live preview</h2><button class="btn small" type="button" data-open-tpl aria-haspopup="dialog">Template: <b id="tplName2">Classic</b></button></div>
+    <div class="paper" id="paper"></div>
+  </aside>
+</main>
+
+<div class="modal" id="tplModal" hidden>
+  <div class="modal-backdrop" data-close-tpl></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="tplModalTitle">
+    <div class="modal-head">
+      <div><h2 id="tplModalTitle">Choose a template</h2><p>Your content stays the same. You can change this any time.</p></div>
+      <button class="btn small" type="button" data-close-tpl>Close</button>
+    </div>
+    <div class="tpls" id="tpls" role="group" aria-label="Resume templates"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+  window.__INITIAL_DRAFT__ = __INITIAL_DRAFT_JSON__;
+  document.documentElement.style.setProperty("--accent", "__THEME_C1__");
+  document.documentElement.style.setProperty("--tint", "__THEME_C2__");
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var esc = function (s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); };
+  var uid = 0, nid = function () { return ++uid; };
+
+  var defaultState = {
+    template: "classic", name: "", mobile: "", email: "", address: "", portfolio: "", summary: "",
+    hard: [], soft: [], jobs: [], edu: [],
+    hasCerts: false, certs: [], hasAccomplishments: false, accomplishments: []
+  };
+  var restored = (window.__INITIAL_DRAFT__ && typeof window.__INITIAL_DRAFT__ === "object") ? window.__INITIAL_DRAFT__ : null;
+  var state = restored ? Object.assign({}, defaultState, restored) : defaultState;
+  if (restored) {
+    var seenIds = []
+      .concat((state.jobs || []).map(function (j) { return j.id || 0; }))
+      .concat((state.edu || []).map(function (d) { return d.id || 0; }))
+      .concat((state.certs || []).map(function (c) { return c.id || 0; }))
+      .concat((state.accomplishments || []).map(function (a) { return a.id || 0; }));
+    uid = Math.max.apply(null, [0].concat(seenIds));
+  }
+  var suggested = { hard: [], soft: [] };
+
+  var SPARK = '<svg class="spark" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 6.6L21 11l-6.6 2.4L12 20l-2.4-6.6L3 11l6.6-2.4L12 2z"/></svg>';
+
+  // Simulated suggestions. In the real build this comes from an AI call.
+  var BANK = [
+    { keys: ["software", "developer", "engineer", "programmer", "web", "frontend", "backend"],
+      hard: ["JavaScript", "React", "Git", "REST APIs", "SQL", "Unit testing", "CI/CD"],
+      soft: ["Problem solving", "Collaboration", "Attention to detail", "Clear communication"] },
+    { keys: ["nurse", "nursing", "caregiver", "health"],
+      hard: ["Patient assessment", "Medication administration", "Electronic health records", "IV therapy", "Wound care"],
+      soft: ["Empathy", "Composure under pressure", "Teamwork", "Clear communication"] },
+    { keys: ["market", "brand", "content", "social media", "seo"],
+      hard: ["SEO", "Google Analytics", "Content strategy", "Email campaigns", "A/B testing"],
+      soft: ["Creativity", "Storytelling", "Adaptability", "Collaboration"] },
+    { keys: ["account", "finance", "bookkeep", "payroll"],
+      hard: ["Financial reporting", "Excel", "Account reconciliation", "Budgeting", "Accounts payable"],
+      soft: ["Accuracy", "Integrity", "Time management", "Clear communication"] },
+    { keys: ["recruit", "talent", "hr ", "human resources"],
+      hard: ["Candidate sourcing", "Applicant tracking systems", "Structured interviewing", "Job description writing", "Offer negotiation"],
+      soft: ["Active listening", "Relationship building", "Discretion", "Persuasion"] }
+  ];
+  var FALLBACK = { hard: ["Microsoft Office", "Data entry", "Scheduling", "Customer service", "Report writing"],
+                   soft: ["Communication", "Teamwork", "Time management", "Adaptability"] };
+
+  function bankFor(title) {
+    var t = " " + title.toLowerCase() + " ";
+    for (var i = 0; i < BANK.length; i++) {
+      for (var k = 0; k < BANK[i].keys.length; k++) if (t.indexOf(BANK[i].keys[k]) !== -1) return BANK[i];
+    }
+    return FALLBACK;
+  }
+
+  function fmtMonth(v) {
+    if (!v) return "";
+    var p = v.split("-"); if (p.length < 2) return v;
+    var names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    return names[parseInt(p[1], 10) - 1] + " " + p[0];
+  }
+  function bullets(text) {
+    return String(text || "").split("\n").map(function (l) { return l.replace(/^[\s\-•*]+/, "").trim(); }).filter(Boolean);
+  }
+  function toast(msg) {
+    var t = $("#toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toast._t); toast._t = setTimeout(function () { t.classList.remove("show"); }, 2800);
+  }
+
+  /* ---------- Skills ---------- */
+  function has(list, s) { return list.some(function (x) { return x.toLowerCase() === s.toLowerCase(); }); }
+  function addSkill(type, value) {
+    value = value.trim(); if (!value || has(state[type], value)) return false;
+    state[type].push(value); renderSkills(); renderPreview(); return true;
+  }
+  function removeSkill(type, idx) { state[type].splice(idx, 1); renderSkills(); renderPreview(); }
+
+  function renderSkills() {
+    ["hard", "soft"].forEach(function (type) {
+      $("#" + type + "Chips").innerHTML = state[type].map(function (s, i) {
+        return '<span class="chip">' + esc(s) + '<button type="button" aria-label="Remove ' + esc(s) + '" data-rm="' + type + ':' + i + '">&times;</button></span>';
+      }).join("");
+      var box = $("#" + (type === "hard" ? "sugHard" : "sugSoft"));
+      box.innerHTML = suggested[type].map(function (s) {
+        var added = has(state[type], s);
+        return '<button type="button" class="chip suggest' + (added ? " added" : "") + '" data-sug="' + type + '" data-val="' + esc(s) + '"' + (added ? " disabled" : "") + '>' + (added ? "&#10003; " : "+ ") + esc(s) + '</button>';
+      }).join("");
+    });
+  }
+
+  $("#suggestBtn").addEventListener("click", function () {
+    var title = $("#targetJob").value.trim();
+    var btn = this, label = $("span", btn);
+    if (!title) { toast("Enter the job you're working on first."); $("#targetJob").focus(); return; }
+    btn.disabled = true; label.textContent = "Thinking...";
+    setTimeout(function () {
+      var b = bankFor(title);
+      suggested = { hard: b.hard.slice(), soft: b.soft.slice() };
+      $("#suggestTitle").textContent = "Suggested for " + title;
+      $("#suggestPanel").hidden = false;
+      renderSkills();
+      btn.disabled = false; label.textContent = "Suggest again";
+    }, 900);
+  });
+  $("#addAll").addEventListener("click", function () {
+    suggested.hard.forEach(function (s) { if (!has(state.hard, s)) state.hard.push(s); });
+    suggested.soft.forEach(function (s) { if (!has(state.soft, s)) state.soft.push(s); });
+    renderSkills(); renderPreview();
+  });
+  document.addEventListener("click", function (e) {
+    var sug = e.target.closest("[data-sug]");
+    if (sug) { addSkill(sug.dataset.sug, sug.dataset.val); return; }
+    var rm = e.target.closest("[data-rm]");
+    if (rm) { var p = rm.dataset.rm.split(":"); removeSkill(p[0], parseInt(p[1], 10)); return; }
+    var add = e.target.closest("[data-add-skill]");
+    if (add) { var t = add.dataset.addSkill, inp = $("#" + t + "Input"); if (addSkill(t, inp.value)) inp.value = ""; inp.focus(); }
+  });
+  ["hard", "soft"].forEach(function (t) {
+    $("#" + t + "Input").addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); if (addSkill(t, this.value)) this.value = ""; }
+    });
+  });
+
+  /* ---------- Employment & education ---------- */
+  function newJob() { return { id: nid(), title: "", company: "", start: "", end: "", current: false, notes: "", desc: "" }; }
+  function newEdu() { return { id: nid(), school: "", degree: "", start: "", end: "", honors: "" }; }
+  function newCert() { return { id: nid(), name: "", link: "", date: "" }; }
+  function newAccomplishment() { return { id: nid(), title: "", description: "" }; }
+
+  function jobHTML(j, n, total) {
+    return '<div class="entry" data-kind="jobs" data-id="' + j.id + '">' +
+      '<div class="entry-head"><strong>' + (total > 1 ? "Job " + n : "Most recent job") + '</strong>' +
+      (total > 1 ? '<button type="button" class="link danger" data-remove="jobs">Remove</button>' : "") + '</div>' +
+      '<div class="grid2 field"><div><label for="jt' + j.id + '">Job title</label><input type="text" id="jt' + j.id + '" data-field="title" placeholder="e.g. Software Developer" value="' + esc(j.title) + '"></div>' +
+      '<div><label for="jc' + j.id + '">Company</label><input type="text" id="jc' + j.id + '" data-field="company" placeholder="e.g. TechCorp Inc." value="' + esc(j.company) + '"></div></div>' +
+      '<div class="grid2 field"><div><label for="js' + j.id + '">Start date</label><input type="month" id="js' + j.id + '" data-field="start" value="' + esc(j.start) + '"></div>' +
+      '<div><label for="je' + j.id + '">End date</label><input type="month" id="je' + j.id + '" data-field="end" value="' + esc(j.end) + '"' + (j.current ? " disabled" : "") + '>' +
+      '<label class="check"><input type="checkbox" data-field="current"' + (j.current ? " checked" : "") + '> I currently work here</label></div></div>' +
+      '<div class="field"><label for="jn' + j.id + '">The work you did, in your own words</label>' +
+      '<textarea id="jn' + j.id + '" data-field="notes" rows="3" placeholder="e.g. built the checkout page, fixed bugs, worked with the design team, trained two new hires">' + esc(j.notes) + '</textarea></div>' +
+      '<div class="field"><button type="button" class="btn-ai" data-gen>' + SPARK + '<span>Write &ldquo;What you did&rdquo; with AI</span></button><p class="hint" data-hint>Uses your notes above. You can edit the result.</p></div>' +
+      '<div class="field"><label for="jd' + j.id + '">What you did</label>' +
+      '<textarea id="jd' + j.id + '" data-field="desc" rows="5" placeholder="Your bullet points will appear here. You can also write them yourself.">' + esc(j.desc) + '</textarea></div>' +
+      '</div>';
+  }
+  function eduHTML(d, n, total) {
+    return '<div class="entry" data-kind="edu" data-id="' + d.id + '">' +
+      '<div class="entry-head"><strong>' + (total > 1 ? "Education " + n : "Most recent education") + '</strong>' +
+      (total > 1 ? '<button type="button" class="link danger" data-remove="edu">Remove</button>' : "") + '</div>' +
+      '<div class="field"><label for="es' + d.id + '">School or institution</label><input type="text" id="es' + d.id + '" data-field="school" placeholder="e.g. University of Toronto" value="' + esc(d.school) + '"></div>' +
+      '<div class="field"><label for="ed' + d.id + '">Degree or field of study</label><input type="text" id="ed' + d.id + '" data-field="degree" placeholder="e.g. BSc in Computer Science" value="' + esc(d.degree) + '"></div>' +
+      '<div class="grid2 field"><div><label for="ea' + d.id + '">Start year</label><input type="text" id="ea' + d.id + '" data-field="start" inputmode="numeric" maxlength="4" placeholder="2018" value="' + esc(d.start) + '"></div>' +
+      '<div><label for="eb' + d.id + '">End year <span class="opt">(or expected)</span></label><input type="text" id="eb' + d.id + '" data-field="end" inputmode="numeric" maxlength="4" placeholder="2022" value="' + esc(d.end) + '"></div></div>' +
+      '<div class="field"><label for="eh' + d.id + '">Honors, awards, or notable coursework <span class="opt">(optional)</span></label>' +
+      '<textarea id="eh' + d.id + '" data-field="honors" rows="2" placeholder="e.g. Dean\u2019s List, relevant coursework, thesis topic, scholarships">' + esc(d.honors) + '</textarea></div>' +
+      '</div>';
+  }
+  function certHTML(c, n, total) {
+    return '<div class="entry" data-kind="certs" data-id="' + c.id + '">' +
+      '<div class="entry-head"><strong>' + (total > 1 ? "Certificate " + n : "Certificate") + '</strong>' +
+      (total > 1 ? '<button type="button" class="link danger" data-remove="certs">Remove</button>' : "") + '</div>' +
+      '<div class="field"><label for="cn' + c.id + '">Certificate / training name</label><input type="text" id="cn' + c.id + '" data-field="name" placeholder="e.g. AWS Certified Solutions Architect" value="' + esc(c.name) + '"></div>' +
+      '<div class="grid2 field"><div><label for="cl' + c.id + '">Certificate ID or link <span class="opt">(if available)</span></label><input type="text" id="cl' + c.id + '" data-field="link" placeholder="e.g. credential ID or verification URL" value="' + esc(c.link) + '"></div>' +
+      '<div><label for="cd' + c.id + '">Date acquired</label><input type="month" id="cd' + c.id + '" data-field="date" value="' + esc(c.date) + '"></div></div>' +
+      '</div>';
+  }
+  function accHTML(a, n, total) {
+    return '<div class="entry" data-kind="accomplishments" data-id="' + a.id + '">' +
+      '<div class="entry-head"><strong>' + (total > 1 ? "Accomplishment " + n : "Accomplishment") + '</strong>' +
+      (total > 1 ? '<button type="button" class="link danger" data-remove="accomplishments">Remove</button>' : "") + '</div>' +
+      '<div class="field"><label for="at' + a.id + '">Title</label><input type="text" id="at' + a.id + '" data-field="title" placeholder="e.g. Published a research paper, hackathon winner, volunteer leadership" value="' + esc(a.title) + '"></div>' +
+      '<div class="field"><label for="ad' + a.id + '">Description <span class="opt">(optional)</span></label><textarea id="ad' + a.id + '" data-field="description" rows="2" placeholder="Add a line or two of extra detail if useful.">' + esc(a.description) + '</textarea></div>' +
+      '</div>';
+  }
+  function renderEntries() {
+    $("#jobs").innerHTML = state.jobs.map(function (j, i) { return jobHTML(j, i + 1, state.jobs.length); }).join("");
+    $("#edus").innerHTML = state.edu.map(function (d, i) { return eduHTML(d, i + 1, state.edu.length); }).join("");
+    $("#certs").innerHTML = state.certs.map(function (c, i) { return certHTML(c, i + 1, state.certs.length); }).join("");
+    $("#accomplishments").innerHTML = state.accomplishments.map(function (a, i) { return accHTML(a, i + 1, state.accomplishments.length); }).join("");
+  }
+  function findEntry(el) {
+    var box = el.closest(".entry"); if (!box) return null;
+    var list = state[box.dataset.kind], id = parseInt(box.dataset.id, 10);
+    for (var i = 0; i < list.length; i++) if (list[i].id === id) return { box: box, list: list, item: list[i], idx: i };
+    return null;
+  }
+
+  $("#addJob").addEventListener("click", function () { state.jobs.push(newJob()); renderEntries(); renderPreview(); });
+  $("#addEdu").addEventListener("click", function () { state.edu.push(newEdu()); renderEntries(); renderPreview(); });
+  $("#addCert").addEventListener("click", function () { state.certs.push(newCert()); renderEntries(); renderPreview(); });
+  $("#addAccomplishment").addEventListener("click", function () { state.accomplishments.push(newAccomplishment()); renderEntries(); renderPreview(); });
+
+  function syncOptionalSections() {
+    $("#certsBody").hidden = !state.hasCerts;
+    $("#accBody").hidden = !state.hasAccomplishments;
+    $("#hasCertsToggle").checked = !!state.hasCerts;
+    $("#hasAccomplishmentsToggle").checked = !!state.hasAccomplishments;
+  }
+
+  $("#hasCertsToggle").addEventListener("change", function () {
+    state.hasCerts = this.checked;
+    if (state.hasCerts && !state.certs.length) state.certs.push(newCert());
+    syncOptionalSections(); renderEntries(); renderPreview();
+  });
+
+  $("#hasAccomplishmentsToggle").addEventListener("change", function () {
+    state.hasAccomplishments = this.checked;
+    if (state.hasAccomplishments && !state.accomplishments.length) state.accomplishments.push(newAccomplishment());
+    syncOptionalSections(); renderEntries(); renderPreview();
+  });
+
+  document.addEventListener("click", function (e) {
+    var rm = e.target.closest("[data-remove]");
+    if (rm) { var f = findEntry(rm); if (f) { f.list.splice(f.idx, 1); renderEntries(); renderPreview(); } return; }
+
+    var gen = e.target.closest("[data-gen]");
+    if (gen) {
+      var f2 = findEntry(gen); if (!f2) return;
+      var hint = $("[data-hint]", f2.box), label = $("span", gen);
+      if (!f2.item.notes.trim()) { hint.textContent = "Add a few notes about your work above first."; $("[data-field=notes]", f2.box).focus(); return; }
+      gen.disabled = true; label.textContent = "Writing..."; hint.textContent = "Turning your notes into bullet points.";
+      setTimeout(function () {
+        // Simulated output. In the real build the AI writes this from the notes, title, and company.
+        var parts = f2.item.notes.split(/\n|(?<=[.;])\s+|,\s*(?:and\s+)?/).map(function (s) {
+          return s.replace(/^[\s\-•*]+/, "").replace(/^i\s+/i, "").replace(/[.;]+$/, "").trim();
+        }).filter(Boolean);
+        var out = parts.map(function (p) { return "\u2022 " + p.charAt(0).toUpperCase() + p.slice(1) + "."; }).join("\n");
+        f2.item.desc = out;
+        var ta = $("[data-field=desc]", f2.box); ta.value = out;
+        renderPreview();
+        gen.disabled = false; label.textContent = "Rewrite with AI";
+        hint.textContent = "Review and edit anything that isn't quite right.";
+      }, 1000);
+    }
+  });
+
+  /* ---------- Input binding ---------- */
+  document.addEventListener("input", function (e) {
+    var t = e.target;
+    if (t.dataset.bind) { state[t.dataset.bind] = t.value; renderPreview(); return; }
+    if (t.dataset.field) {
+      var f = findEntry(t); if (!f) return;
+      var field = t.dataset.field;
+      if (t.type === "checkbox") {
+        f.item.current = t.checked;
+        var end = $("[data-field=end]", f.box); end.disabled = t.checked; if (t.checked) { end.value = ""; f.item.end = ""; }
+      } else { f.item[field] = t.value; }
+      renderPreview();
+    }
+  });
+
+  /* ---------- Templates ---------- */
+  var TEMPLATES = [
+    { id: "classic",   name: "Classic",   note: "Serif with ruled headings",    layout: "plain",  accent: "#1b2433" },
+    { id: "modern",    name: "Modern",    note: "Clean sans with teal accents", layout: "plain",  accent: "#0d7a77", nameInk: "#0d7a77" },
+    { id: "executive", name: "Executive", note: "Navy header band, gold rule",  layout: "band",   accent: "#c9a227", band: "#13294b" },
+    { id: "minimal",   name: "Minimal",   note: "Light and spacious",           layout: "plain",  accent: "#8a94a6" },
+    { id: "sidebar",   name: "Sidebar",   note: "Two columns, teal side panel", layout: "side",   accent: "#0d3b3b" },
+    { id: "creative",  name: "Creative",  note: "Coral blocks and pill skills", layout: "plain",  accent: "#ef5b45", fill: true },
+    { id: "compact",   name: "Compact",   note: "Dense, fits more on a page",   layout: "plain",  accent: "#2d3748", dense: true },
+    { id: "elegant",   name: "Elegant",   note: "Centered serif, burgundy",     layout: "center", accent: "#7a1f3d" },
+    { id: "bold",      name: "Bold",      note: "Heavy name, black bars",       layout: "plain",  accent: "#111111", fill: true, nameInk: "#111111" },
+    { id: "tech",      name: "Tech",      note: "Monospace, green prompts",     layout: "plain",  accent: "#0f8f5f" },
+    { id: "sage",      name: "Sage",      note: "Soft green band, pill skills", layout: "band",   accent: "#3f6b4f", band: "#e6efe6", bandInk: "#2c4a38", bandSub: "#8aa793" },
+    { id: "timeline",  name: "Timeline",  note: "Jobs on a vertical line",      layout: "plain",  accent: "#4338ca" },
+    { id: "slate",     name: "Slate",     note: "Top bar, gray strip headings", layout: "plain",  accent: "#475569", fill: true, top: "#475569" },
+    { id: "ocean",     name: "Ocean",     note: "Blue-to-teal gradient header", layout: "band",   accent: "#0b4f8a", band: "linear-gradient(120deg,#0b4f8a,#12a4a0)" },
+    { id: "lavender",  name: "Lavender",  note: "Violet panel on the right",    layout: "rside",  accent: "#6d28d9", panel: "#ede9fe", nameInk: "#2e1065" },
+    { id: "sunset",    name: "Sunset",    note: "Warm gradient rule, bar heads", layout: "plain", accent: "#e8590c", nameInk: "#7c2d12" },
+    { id: "newspaper", name: "Newspaper", note: "Double rules, two-column skills", layout: "center", accent: "#111111" },
+    { id: "midnight",  name: "Midnight",  note: "Dark page, sky-blue accents",  layout: "plain",  accent: "#38bdf8", bg: "#0f1b2d", line: "#34506f", nameInk: "#e6edf7" },
+    { id: "rose",      name: "Rose",      note: "Blush band, dotted rules",     layout: "band",   accent: "#e11d48", band: "#fde8ec", bandInk: "#7f1d3a", bandSub: "#c98a9a" },
+    { id: "grid",      name: "Grid",      note: "Boxed headings and skills",    layout: "plain",  accent: "#000000", nameInk: "#000000" },
+    { id: "academic",  name: "Academic",  note: "Dates in a left column",       layout: "plain",  accent: "#111111" },
+    { id: "split",     name: "Split",     note: "Name left, contact right",     layout: "split",  accent: "#4d7c0f", nameInk: "#1a2e05" }
+  ];
+
+  function tBar(w, h, c) { return '<i style="display:block;flex:none;width:' + w + '%;height:' + h + 'px;background:' + c + ';border-radius:1px"></i>'; }
+  function tGroup(t) {
+    var line = t.line || "#d3d8e3";
+    var head = t.fill ? tBar(34, 5, t.accent) : tBar(34, 3, t.accent);
+    return head + tBar(92, 2, line) + tBar(78, 2, line);
+  }
+  function tCol(inner, extra) { return '<span style="display:flex;flex-direction:column;gap:3px;' + (extra || "") + '">' + inner + '</span>'; }
+  function thumb(t) {
+    var line = t.line || "#d3d8e3", ink = t.nameInk || "#1b2433", bg = t.bg || "#fff";
+    var groups = tGroup(t) + tGroup(t) + (t.dense ? tGroup(t) : "");
+    var topB = t.top ? "border-top:4px solid " + t.top + ";" : "";
+    if (t.layout === "side") {
+      return '<span class="thumb" style="flex-direction:row;padding:0;gap:0">' +
+        tCol(tBar(80, 4, "#fff") + tBar(70, 2, "rgba(255,255,255,.6)") + tBar(70, 2, "rgba(255,255,255,.6)"), "width:36%;background:" + t.accent + ";padding:8px 5px") +
+        tCol(tGroup(t) + tGroup(t), "flex:1;padding:8px 6px") + '</span>';
+    }
+    if (t.layout === "rside") {
+      return '<span class="thumb" style="flex-direction:row;padding:0;gap:0">' +
+        tCol(tBar(55, 5, ink) + tBar(75, 2, line) + tGroup(t) + tGroup(t), "flex:1;padding:8px 7px") +
+        tCol(tGroup(t) + tGroup(t), "width:36%;background:" + t.panel + ";padding:8px 5px") + '</span>';
+    }
+    if (t.layout === "band") {
+      var bInk = t.bandInk || "#fff", sub = t.bandSub || "rgba(255,255,255,.6)";
+      return '<span class="thumb" style="padding:0;gap:0">' +
+        tCol(tBar(50, 5, bInk) + tBar(70, 2, sub), "padding:8px 7px;background:" + t.band) +
+        tCol(groups, "padding:6px 7px") + '</span>';
+    }
+    if (t.layout === "center") {
+      return '<span class="thumb" style="align-items:center">' + tBar(50, 5, t.accent) + tBar(70, 2, "#c9ceda") +
+        tCol(groups, "width:100%;margin-top:3px") + '</span>';
+    }
+    if (t.layout === "split") {
+      return '<span class="thumb"><span style="display:flex;justify-content:space-between;align-items:flex-end;gap:6px">' +
+        tBar(46, 5, ink) + tCol(tBar(100, 2, line) + tBar(100, 2, line), "width:34%") + '</span>' +
+        tCol(groups, "margin-top:3px") + '</span>';
+    }
+    return '<span class="thumb" style="background:' + bg + ';' + topB + '">' + tBar(50, 5, ink) + tBar(75, 2, line) + tCol(groups, "margin-top:3px") + '</span>';
+  }
+
+  var tplModal = $("#tplModal"), tplOpener = null;
+  function currentTpl() { return TEMPLATES.filter(function (t) { return t.id === state.template; })[0] || TEMPLATES[0]; }
+  function syncTplUI() {
+    var t = currentTpl();
+    $("#tplCurThumb").innerHTML = thumb(t);
+    $("#tplCurName").textContent = t.name;
+    $("#tplCurNote").textContent = t.note;
+    $("#tplName2").textContent = t.name;
+    document.querySelectorAll("[data-tpl]").forEach(function (b) { b.setAttribute("aria-pressed", b.dataset.tpl === state.template ? "true" : "false"); });
+  }
+  function renderTemplates() {
+    $("#tpls").innerHTML = TEMPLATES.map(function (t) {
+      return '<button type="button" class="tpl" data-tpl="' + t.id + '" aria-pressed="false">' + thumb(t) +
+        '<span class="tn">' + esc(t.name) + '</span><span class="td">' + esc(t.note) + '</span></button>';
+    }).join("");
+    syncTplUI();
+  }
+  function openTpl(opener) {
+    tplOpener = opener || null;
+    tplModal.hidden = false;
+    document.body.style.overflow = "hidden";
+    var sel = $('[data-tpl][aria-pressed="true"]');
+    if (sel) { sel.focus(); sel.scrollIntoView({ block: "nearest" }); }
+  }
+  function closeTpl() {
+    tplModal.hidden = true;
+    document.body.style.overflow = "";
+    if (tplOpener) tplOpener.focus();
+  }
+  function setTemplate(id) {
+    state.template = id;
+    syncTplUI();
+    renderPreview();
+    closeTpl();
+  }
+  document.addEventListener("click", function (e) {
+    var open = e.target.closest("[data-open-tpl]"); if (open) { openTpl(open); return; }
+    var close = e.target.closest("[data-close-tpl]"); if (close) { closeTpl(); return; }
+    var pick = e.target.closest("[data-tpl]"); if (pick) setTemplate(pick.dataset.tpl);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (tplModal.hidden) return;
+    if (e.key === "Escape") { e.preventDefault(); closeTpl(); return; }
+    if (e.key === "Tab") {
+      var f = tplModal.querySelectorAll("button"); if (!f.length) return;
+      var first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    }
+  });
+
+  /* ---------- Preview ---------- */
+  function skillSpans(list) { return list.map(function (x) { return '<span class="sk">' + esc(x) + '</span>'; }).join(""); }
+
+  function renderPreview() {
+    var s = state, h = "";
+    h += '<div class="hd"><h3>' + (s.name.trim() ? esc(s.name) : '<span class="ph">Your full name</span>') + '</h3>';
+    var c = [];
+    if (s.mobile.trim()) c.push(esc(s.mobile));
+    if (s.email.trim()) c.push(esc(s.email));
+    if (s.address.trim()) c.push(esc(s.address));
+    if (s.portfolio.trim()) c.push(esc(s.portfolio));
+    h += '<p class="contact">' + (c.length ? c.map(function (x) { return "<span>" + x + "</span>"; }).join("") : '<span class="ph">Mobile, email, home address</span>') + '</p>';
+    h += s.summary.trim() ? '<p class="summary">' + esc(s.summary) + '</p>' : '<p class="summary ph">Your professional summary will appear here.</p>';
+    h += '</div>';
+
+    h += '<div class="sec sec-skills"><h4>Skills</h4><div class="skills">';
+    if (s.hard.length || s.soft.length) {
+      if (s.hard.length) h += '<p><b>Hard skills:</b> ' + skillSpans(s.hard) + '</p>';
+      if (s.soft.length) h += '<p><b>Soft skills:</b> ' + skillSpans(s.soft) + '</p>';
+    } else h += '<p class="ph">Add your skills to see them here.</p>';
+    h += '</div></div>';
+
+    h += '<div class="sec sec-jobs"><h4>Employment history</h4>';
+    var jobs = s.jobs.filter(function (j) { return j.title || j.company || j.desc || j.start; });
+    if (!jobs.length) h += '<p class="ph">Your jobs will appear here.</p>';
+    jobs.forEach(function (j) {
+      var when = [fmtMonth(j.start), j.current ? "Present" : fmtMonth(j.end)].filter(Boolean).join(" \u2013 ");
+      var head = [j.title, j.company].filter(Boolean).map(esc).join(", ");
+      h += '<div class="item"><div class="row"><b>' + (head || '<span class="ph">Job title, company</span>') + '</b><span class="when">' + esc(when) + '</span></div>';
+      var bl = bullets(j.desc);
+      if (bl.length) h += '<ul>' + bl.map(function (b) { return "<li>" + esc(b) + "</li>"; }).join("") + '</ul>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+    if (s.hasCerts) {
+      h += '<div class="sec sec-certs"><h4>Certificates &amp; Trainings</h4>';
+      var certs = s.certs.filter(function (c) { return c.name || c.link || c.date; });
+      if (!certs.length) h += '<p class="ph">Your certificates will appear here.</p>';
+      certs.forEach(function (c) {
+        var when = fmtMonth(c.date);
+        h += '<div class="item"><div class="row"><b>' + (esc(c.name) || '<span class="ph">Certificate name</span>') + '</b><span class="when">' + esc(when) + '</span></div>' +
+             (c.link ? '<div>' + esc(c.link) + '</div>' : "") + '</div>';
+      });
+      h += '</div>';
+    }
+
+    h += '<div class="sec sec-edu"><h4>Education</h4>';
+    var eds = s.edu.filter(function (d) { return d.school || d.degree || d.start || d.end || d.honors; });
+    if (!eds.length) h += '<p class="ph">Your education will appear here.</p>';
+    eds.forEach(function (d) {
+      var when = [d.start, d.end].filter(Boolean).join(" \u2013 ");
+      h += '<div class="item"><div class="row"><b>' + (esc(d.school) || '<span class="ph">School</span>') + '</b><span class="when">' + esc(when) + '</span></div>' +
+           (d.degree ? '<div>' + esc(d.degree) + '</div>' : "");
+      var hb = bullets(d.honors);
+      if (hb.length) h += '<ul>' + hb.map(function (b) { return "<li>" + esc(b) + "</li>"; }).join("") + '</ul>';
+      h += '</div>';
+    });
+    h += '</div>';
+
+    if (s.hasAccomplishments) {
+      h += '<div class="sec sec-accomplishments"><h4>Additional Accomplishments</h4>';
+      var accs = s.accomplishments.filter(function (a) { return a.title || a.description; });
+      if (!accs.length) h += '<p class="ph">Your additional accomplishments will appear here.</p>';
+      accs.forEach(function (a) {
+        h += '<div class="item"><div class="row"><b>' + (esc(a.title) || '<span class="ph">Accomplishment title</span>') + '</b></div>' +
+             (a.description ? '<div>' + esc(a.description) + '</div>' : "") + '</div>';
+      });
+      h += '</div>';
+    }
+
+    var paper = $("#paper");
+    paper.className = "paper t-" + s.template;
+    paper.innerHTML = h;
+  }
+
+  /* ---------- Chrome ---------- */
+  document.querySelectorAll("[data-tab]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      $("#main").dataset.view = b.dataset.tab;
+      document.querySelectorAll("[data-tab]").forEach(function (x) { x.setAttribute("aria-selected", x === b ? "true" : "false"); });
+      window.scrollTo(0, 0);
+    });
+  });
+  $("#saveDraft").addEventListener("click", function () {
+    window.parent.postMessage({ type: "resume-builder:save-draft", payload: state }, "*");
+    toast("Draft saved.");
+  });
+
+  $("#backBtn").addEventListener("click", function () {
+    window.parent.postMessage({ type: "resume-builder:back" }, "*");
+  });
+
+  $("#useResume").addEventListener("click", function () {
+    var btn = this;
+    if (btn.disabled) return;
+    var original = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Preparing PDF...";
+
+    function fail(msg) {
+      btn.disabled = false;
+      btn.textContent = original;
+      toast(msg || "Couldn't generate the PDF. Please try again.");
+    }
+
+    if (!window.html2canvas || !window.jspdf) {
+      fail("PDF tools didn't load. Check your connection and try again.");
+      return;
+    }
+
+    var paper = $("#paper");
+    window.html2canvas(paper, { scale: 2, backgroundColor: "#ffffff", useCORS: true }).then(function (canvas) {
+      try {
+        var imgData = canvas.toDataURL("image/png");
+        var JsPDF = window.jspdf.jsPDF;
+        var pdf = new JsPDF({ unit: "pt", format: "letter" });
+        var pageWidth = pdf.internal.pageSize.getWidth();
+        var pageHeight = pdf.internal.pageSize.getHeight();
+        var imgWidth = pageWidth;
+        var imgHeight = (canvas.height * imgWidth) / canvas.width;
+        var heightLeft = imgHeight;
+        var position = 0;
+
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+        while (heightLeft > 0) {
+          position = heightLeft - imgHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+          heightLeft -= pageHeight;
+        }
+
+        var blob = pdf.output("blob");
+        var reader = new FileReader();
+        reader.onload = function () {
+          var base = (state.name || "resume").trim().replace(/[^a-zA-Z0-9_-]+/g, "_") || "resume";
+          try {
+            window.parent.postMessage({
+              type: "resume-builder:use-resume",
+              payload: { buffer: reader.result, filename: base + ".pdf" }
+            }, "*", [reader.result]);
+          } catch (e) {
+            window.parent.postMessage({
+              type: "resume-builder:use-resume",
+              payload: { buffer: reader.result, filename: base + ".pdf" }
+            }, "*");
+          }
+        };
+        reader.onerror = function () { fail(); };
+        reader.readAsArrayBuffer(blob);
+      } catch (e) {
+        fail();
+      }
+    }).catch(function () { fail(); });
+  });
+
+  if (!state.jobs.length) state.jobs.push(newJob());
+  if (!state.edu.length) state.edu.push(newEdu());
+  if (state.hasCerts && !state.certs.length) state.certs.push(newCert());
+  if (state.hasAccomplishments && !state.accomplishments.length) state.accomplishments.push(newAccomplishment());
+  syncOptionalSections();
+  renderTemplates(); renderEntries(); renderSkills(); renderPreview();
+})();
+</script>
+</body>
+</html>
